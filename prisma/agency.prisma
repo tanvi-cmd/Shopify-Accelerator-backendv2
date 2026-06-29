@@ -1,0 +1,10 @@
+
+model Wishlist {
+  id String @id @default(uuid())
+  userId String
+}
+
+model Lead {
+  id String @id @default(uuid())
+  email String
+}

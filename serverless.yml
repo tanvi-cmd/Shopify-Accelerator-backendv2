@@ -1,0 +1,66 @@
+service: hx-shopify-headless-accelerator
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  region: us-east-1
+  timeout: 30
+
+plugins:
+  - serverless-offline
+
+functions:
+  health:
+    handler: src/routes/health.handler
+    events:
+      - httpApi:
+          path: /health
+          method: GET
+
+  collections:
+    handler: src/modules/collections/handler.handler
+    timeout: 30
+    events:
+      - httpApi:
+          path: /collections
+          method: POST
+
+  products:
+    handler: src/modules/products/handler.handler
+    timeout: 30
+    events:
+      - httpApi:
+          path: /products
+          method: POST
+
+  version:
+    handler: src/routes/version.handler
+    events:
+      - httpApi:
+          path: /version
+          method: GET
+
+  explorer:
+    handler: src/modules/explorer/handler.handler
+    timeout: 30
+    events:
+      - httpApi:
+          path: /shopify/connect
+          method: POST
+
+  store:
+    handler: src/modules/store/handler.handler
+    timeout: 30
+    events:
+      - httpApi:
+          path: /store
+          method: POST
+
+  search:
+    handler: src/modules/search/handler.handler
+    timeout: 30
+    events:
+      - httpApi:
+          path: /search
+          method: POST

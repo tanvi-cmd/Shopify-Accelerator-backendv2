@@ -19,3 +19,105 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+---
+
+# 🎨 Frontend README (`React + Vite Dashboard`)
+
+```md
+# HX Shopify Headless Frontend
+
+A modern React dashboard to interact with Shopify Headless Backend APIs.
+
+---
+
+## 🚀 Features
+
+- Product listing dashboard
+- Storefront search
+- Collection browsing
+- API integration with backend
+- Clean dashboard UI
+- React state-driven architecture
+
+---
+
+## 🧰 Tech Stack
+
+- React 18+
+- Vite
+- TypeScript (optional)
+- Axios / Fetch API
+- Tailwind CSS (or custom CSS)
+
+---
+
+## 📁 Project Structure
+src/
+components/
+pages/
+services/
+hooks/
+App.tsx
+main.tsx
+
+
+---
+
+## ⚙️ Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+2. Configure API URL
+
+Create .env file:
+
+VITE_API_URL=http://localhost:3000
+3. Run frontend
+npm run dev
+
+App will run at:
+
+http://localhost:5173
+🔌 Backend Connection
+
+Frontend communicates with backend via:
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+Example API call:
+
+fetch(`${API_URL}/products`)
+📊 Features Breakdown
+🛍 Products Dashboard
+Displays Shopify products
+Supports pagination (if implemented)
+🔎 Search
+GET /search?q=shirt
+
+Search is optional for other endpoints.
+
+📦 Collections
+
+Displays grouped product categories
+
+🎨 UI Improvements (Recommended)
+Add Tailwind CSS
+Add loading skeletons
+Add product cards grid
+Add filters (price, tags)
+Add search debounce
+🧪 Environment Variables
+VITE_API_URL=http://localhost:3000
+🐞 Common Issues
+Backend not connecting
+Check CORS in backend
+Verify API URL in .env
+Empty response
+Ensure backend is running
+Check Shopify token validity
+🚀 Build for Production
+npm run build

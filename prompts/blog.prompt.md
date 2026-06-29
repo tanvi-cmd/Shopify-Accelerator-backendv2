@@ -1,0 +1,1 @@
+# Blog Prompt Template

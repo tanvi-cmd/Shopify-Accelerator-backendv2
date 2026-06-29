@@ -1,0 +1,10 @@
+
+model ConfiguratorSession {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+}
+
+model Quote {
+  id String @id @default(uuid())
+  quoteNumber String
+}

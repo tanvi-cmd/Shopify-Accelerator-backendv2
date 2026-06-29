@@ -1,0 +1,24 @@
+{
+  "name": "hx-shopify-headless-accelerator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "serverless offline",
+    "deploy": "serverless deploy"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "prisma": "^6.19.3",
+    "serverless": "^4.38.1",
+    "serverless-offline": "^14.7.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
+    "graphql-request": "^7.4.0",
+    "zod": "^4.4.3"
+  }
+}
