@@ -1,45 +1,22 @@
-import { Request, Response, NextFunction } from "express";
-import ApiResponse from "../../lib/response";
-
-
+import { Request, Response } from "express";
 import StoreService from "./service";
+import { createRuntimeContext } from "../../lib/runtime-context";
 
 class StoreController {
+  async getStore(req: Request, res: Response) {
+    try {
+      const context = createRuntimeContext(req);
 
-    async getStore(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) {
+      const result = await StoreService.getStore(context);
 
-        try {
-
-            const result =
-                await StoreService.getStore(
-                    req.body
-                );
-
-            //return res.status(200).json(result);
-            return ApiResponse.success(
-
-                res,
-
-                result,
-
-                "Store fetched successfully"
-
-            );
-
-        }
-
-        catch (error) {
-
-            next(error);
-
-        }
-
+      res.status(result.status).json(result);
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
-
+  }
 }
 
 export default new StoreController();

@@ -1,55 +1,22 @@
-import {
-  Request,
-  Response,
-  NextFunction
-} from "express";
-
+import { Request, Response } from "express";
 import ProductService from "./service";
-
-import ApiResponse from "../../lib/response";
-
-import {
-  ProductRequest
-} from "./types";
+import { createRuntimeContext } from "../../lib/runtime-context";
 
 class ProductController {
-
-  async getProducts(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-
+  async getProducts(req: Request, res: Response) {
     try {
+      const context = createRuntimeContext(req);
 
-      const config =
-        req.body as ProductRequest;
+      const result = await ProductService.getProducts(context);
 
-      const result =
-        await ProductService.getProducts(
-          config
-        );
-
-      return ApiResponse.success(
-
-        res,
-
-        result,
-
-        "Products fetched successfully"
-
-      );
-
+      res.status(result.status).json(result);
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
-
-    catch (error) {
-
-      next(error);
-
-    }
-
   }
-
 }
 
 export default new ProductController();

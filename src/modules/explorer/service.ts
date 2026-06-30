@@ -1,81 +1,30 @@
-import StoreService from "../store/service";
-import ProductService from "../products/service";
-import CollectionService from "../collections/service";
-import SearchService from "../search/service";
+import { ModuleRegistry } from "../../config/module-registry";
+import { RuntimeContext } from "../../shared/interfaces/runtime-context";
 
 class ExplorerService {
 
-  async connect(config: any) {
+  async connect(
+    context: RuntimeContext
+  ) {
 
-    const modules: string[] =
-      config.selectedModules || [];
+    const results: Record<string, any> = {};
 
-    const response: any = {};
+    for (const moduleName of context.selectedModules) {
 
-    /*
-    ---------------------------------------
-    Store
-    ---------------------------------------
-    */
+      const module = ModuleRegistry[
+        moduleName as keyof typeof ModuleRegistry
+      ];
 
-    if (modules.includes("Store")) {
+      if (!module) {
+        continue;
+      }
 
-      response.store =
-        await StoreService.getStore(config);
-
-    }
-
-    /*
-    ---------------------------------------
-    Products
-    ---------------------------------------
-    */
-
-    if (modules.includes("Products")) {
-
-      response.products =
-        await ProductService.getProducts(config);
+      results[moduleName] =
+        await module.execute(context);
 
     }
 
-    /*
-    ---------------------------------------
-    Collections
-    ---------------------------------------
-    */
-
-    if (modules.includes("Collections")) {
-
-      response.collections =
-        await CollectionService.getCollections(config);
-
-    }
-
-    /*
-    ---------------------------------------
-    Search
-    ---------------------------------------
-    */
-
-    if (
-      modules.includes("Search") &&
-      config.searchQuery
-    ) {
-
-      response.search =
-        await SearchService.search(config);
-
-    }
-
-    return {
-
-      success: true,
-
-      executedModules: modules,
-
-      response
-
-    };
+    return results;
 
   }
 

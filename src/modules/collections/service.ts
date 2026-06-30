@@ -2,28 +2,31 @@ import ShopifyService from "../../services/shopify.service";
 
 import COLLECTIONS_QUERY from "./graphql";
 
+import { RuntimeContext } from "../../shared/interfaces/runtime-context";
+
 class CollectionService {
 
-    async getCollections(config: any) {
+  async getCollections(
+    context: RuntimeContext
+  ) {
 
-        return ShopifyService.execute({
+    return ShopifyService.execute({
 
-            api: "storefront",
+      api: "storefront",
 
-            config,
+      context,
 
-            query: COLLECTIONS_QUERY,
+      query: COLLECTIONS_QUERY,
 
-            variables: {
+      variables: {
 
-                first:
-                    config.pageSize || 20
+        first: context.pageSize
 
-            }
+      }
 
-        });
+    });
 
-    }
+  }
 
 }
 

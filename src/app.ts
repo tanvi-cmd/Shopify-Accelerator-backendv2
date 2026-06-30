@@ -1,174 +1,50 @@
-import express, {
-  Application,
-  Request,
-  Response
-} from "express";
-
+import express from "express";
 import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
+
+import validationMiddleware from "./middleware/validation.middleware";
 
 import explorerRoutes from "./modules/explorer/routes";
 import storeRoutes from "./modules/store/routes";
 import productRoutes from "./modules/products/routes";
 import collectionRoutes from "./modules/collections/routes";
 import searchRoutes from "./modules/search/routes";
-import customerRoutes from "./modules/customer/routes";
-import authRoutes from "./modules/auth/routes";
+import menuRoutes from "./modules/menus/routes";
+import cmsRoutes from "./modules/cms/routes";
+import metaobjectRoutes from "./modules/metaobjects/routes";
+import orderRoutes from "./modules/orders/routes";
 
-import errorHandler from "./middleware/errorHandler";
+const app = express();
 
-const app: Application = express();
+app.use(cors());
 
-/*
-|--------------------------------------------------------------------------
-| Security Middleware
-|--------------------------------------------------------------------------
-*/
+app.use(express.json());
 
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false
-  })
-);
+app.get("/health", (_, res) => {
+  res.json({
+    success: true,
+    service: "HX Commerce Accelerator Backend",
+    version: "2.0.0"
+  });
+});
 
-app.use(
-  cors({
-    origin: true,
-    credentials: true
-  })
-);
+app.use("/shopify", validationMiddleware);
 
-/*
-|--------------------------------------------------------------------------
-| Body Parser
-|--------------------------------------------------------------------------
-*/
+app.use("/shopify", explorerRoutes);
 
-app.use(
-  express.json({
-    limit: "10mb"
-  })
-);
+app.use("/store", validationMiddleware, storeRoutes);
 
-app.use(
-  express.urlencoded({
-    extended: true
-  })
-);
+app.use("/products", validationMiddleware, productRoutes);
 
-/*
-|--------------------------------------------------------------------------
-| Logger
-|--------------------------------------------------------------------------
-*/
+app.use("/collections", validationMiddleware, collectionRoutes);
 
-app.use(morgan("dev"));
+app.use("/search", validationMiddleware, searchRoutes);
 
-/*
-|--------------------------------------------------------------------------
-| Health Check
-|--------------------------------------------------------------------------
-*/
+app.use("/menus", validationMiddleware, menuRoutes);
 
-app.get(
-  "/health",
-  (
-    req: Request,
-    res: Response
-  ) => {
+app.use("/cms", validationMiddleware, cmsRoutes);
 
-    res.status(200).json({
+app.use("/metaobjects",  validationMiddleware,  metaobjectRoutes);
 
-      success: true,
-
-      service: "HX Shopify Headless Backend",
-
-      version: "2.0.0",
-
-      environment:
-        process.env.NODE_ENV,
-
-      timestamp:
-        new Date().toISOString()
-
-    });
-
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
-
-app.use(
-  "/shopify/connect",
-  explorerRoutes
-);
-
-app.use(
-  "/store",
-  storeRoutes
-);
-
-app.use(
-  "/products",
-  productRoutes
-);
-
-app.use(
-  "/collections",
-  collectionRoutes
-);
-
-app.use(
-  "/search",
-  searchRoutes
-);
-
-app.use(
-  "/customer",
-  customerRoutes
-);
-
-app.use(
-    "/auth",
-    authRoutes
-);
-
-/*
-|--------------------------------------------------------------------------
-| 404
-|--------------------------------------------------------------------------
-*/
-
-app.use(
-  (
-    req: Request,
-    res: Response
-  ) => {
-
-    res.status(404).json({
-
-      success: false,
-
-      message: "Route not found",
-
-      path: req.originalUrl
-
-    });
-
-  }
-);
-
-/*
-|--------------------------------------------------------------------------
-| Global Error Handler
-|--------------------------------------------------------------------------
-*/
-
-app.use(errorHandler);
+app.use("/orders", validationMiddleware, orderRoutes);
 
 export default app;

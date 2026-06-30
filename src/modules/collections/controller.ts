@@ -1,45 +1,22 @@
-import { Request, Response, NextFunction } from "express";
-import ApiResponse from "../../lib/response";
-
+import { Request, Response } from "express";
 import CollectionService from "./service";
+import { createRuntimeContext } from "../../lib/runtime-context";
 
 class CollectionController {
+  async getCollections(req: Request, res: Response) {
+    try {
+      const context = createRuntimeContext(req);
 
-    async getCollections(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) {
+      const result = await CollectionService.getCollections(context);
 
-        try {
-
-            const result =
-                await CollectionService.getCollections(
-                    req.body
-                );
-
-            //return res.status(200).json(result);
-
-            return ApiResponse.success(
-
-                res,
-
-                result,
-
-                "Collections fetched successfully"
-
-            );
-
-        }
-
-        catch (error) {
-
-            next(error);
-
-        }
-
+      res.status(result.status).json(result);
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
-
+  }
 }
 
 export default new CollectionController();

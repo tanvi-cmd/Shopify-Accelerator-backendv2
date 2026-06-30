@@ -1,116 +1,105 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
+import { RuntimeContext } from "../shared/interfaces/runtime-context";
 
-export interface ShopifyConfig {
-  store: string;
-  storefrontToken: string;
-  adminToken: string;
-  apiVersion: string;
-}
-
-export interface ShopifyRequest {
+export interface ShopifyExecuteOptions {
   api: "storefront" | "admin";
-  config: ShopifyConfig;
+  context: RuntimeContext;
   query: string;
   variables?: Record<string, any>;
 }
 
+export interface ShopifyResult<T> {
+  success: boolean;
+  data?: T;
+  errors?: any;
+  status: number;
+  duration: number;
+}
+
 class ShopifyService {
 
-  private async request<T>(
-    url: string,
-    tokenHeader: string,
-    token: string,
-    query: string,
-    variables: Record<string, any> = {}
-  ) {
+  async execute<T>(
+    options: ShopifyExecuteOptions
+  ): Promise<ShopifyResult<T>> {
 
     const started = Date.now();
+
+    const {
+      api,
+      context,
+      query,
+      variables = {}
+    } = options;
+
+    const endpoint =
+      api === "storefront"
+        ? `https://${context.store}/api/${context.apiVersion}/graphql.json`
+        : `https://${context.store}/admin/api/${context.apiVersion}/graphql.json`;
+
+    const config: AxiosRequestConfig = {
+
+      timeout: 30000,
+
+      headers: {
+
+        "Content-Type": "application/json",
+
+        ...(api === "storefront"
+          ? {
+              "X-Shopify-Storefront-Access-Token":
+                context.storefrontToken
+            }
+          : {
+              "X-Shopify-Access-Token":
+                context.adminToken
+            })
+
+      }
+
+    };
 
     try {
 
       const response = await axios.post(
-        url,
+        endpoint,
         {
           query,
           variables
         },
-        {
-          timeout: 30000,
-          headers: {
-            "Content-Type": "application/json",
-            [tokenHeader]: token
-          }
-        }
+        config
       );
-
-      if (response.data.errors) {
-
-        return {
-          success: false,
-          duration: Date.now() - started,
-          error: response.data.errors
-        };
-
-      }
 
       return {
 
         success: true,
 
+        status: response.status,
+
         duration: Date.now() - started,
 
-        data: response.data.data as T
+        data: response.data.data as T,
+
+        errors: response.data.errors
 
       };
 
-    }
-    catch (error: any) {
+    } catch (error: any) {
 
       return {
 
         success: false,
 
+        status: error.response?.status || 500,
+
         duration: Date.now() - started,
 
-        error:
+        errors:
           error.response?.data ??
-          error.message ??
-          "Unknown Error"
+          error.message
 
       };
 
     }
-
-  }
-
-  async execute<T>(
-    request: ShopifyRequest
-  ) {
-
-    const { config, api, query, variables } = request;
-
-    const endpoint =
-      api === "storefront"
-        ? `https://${config.store}/api/${config.apiVersion}/graphql.json`
-        : `https://${config.store}/admin/api/${config.apiVersion}/graphql.json`;
-
-    const header =
-      api === "storefront"
-        ? "X-Shopify-Storefront-Access-Token"
-        : "X-Shopify-Access-Token";
-
-    const token =
-      api === "storefront"
-        ? config.storefrontToken
-        : config.adminToken;
-
-    return this.request<T>(
-      endpoint,
-      header,
-      token,
-      query,
-      variables
-    );
 
   }
 

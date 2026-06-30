@@ -1,43 +1,22 @@
-import { Request, Response, NextFunction } from "express";
-import ApiResponse from "../../lib/response";
-
+import { Request, Response } from "express";
 import SearchService from "./service";
+import { createRuntimeContext } from "../../lib/runtime-context";
 
 class SearchController {
+  async search(req: Request, res: Response) {
+    try {
+      const context = createRuntimeContext(req);
 
-    async search(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) {
+      const result = await SearchService.search(context);
 
-        try {
-
-            const result =
-                await SearchService.search(
-                    req.body
-                );
-
-            //return res.status(200).json(result);
-            return ApiResponse.success(
-
-                    res,
-
-                    result,
-
-                    "Search completed successfully"
-
-                );
-        }
-
-        catch (error) {
-
-            next(error);
-
-        }
-
+      res.status(result.status).json(result);
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
-
+  }
 }
 
 export default new SearchController();

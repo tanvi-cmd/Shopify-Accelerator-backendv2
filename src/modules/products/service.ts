@@ -2,29 +2,25 @@ import ShopifyService from "../../services/shopify.service";
 
 import PRODUCTS_QUERY from "./graphql";
 
-import {
-  ProductRequest,
-  ProductsResponse
-} from "./types";
+import { RuntimeContext } from "../../shared/interfaces/runtime-context";
 
 class ProductService {
 
   async getProducts(
-    config: ProductRequest
+    context: RuntimeContext
   ) {
 
-    return ShopifyService.execute<ProductsResponse>({
+    return ShopifyService.execute({
 
       api: "storefront",
 
-      config,
+      context,
 
       query: PRODUCTS_QUERY,
 
       variables: {
 
-        first:
-          config.pageSize
+        first: context.pageSize
 
       }
 

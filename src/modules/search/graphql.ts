@@ -1,63 +1,31 @@
 const SEARCH_QUERY = `
+query Search($query: String!, $first: Int!) {
 
-query Search(
+  search(
+    query: $query,
+    first: $first,
+    types: [PRODUCT]
+  ) {
 
-    $query: String!,
+    nodes {
 
-    $first: Int!
+      ... on Product {
 
-){
+        id
+        title
+        handle
 
-    search(
-
-        query: $query,
-
-        first: $first,
-
-        types: PRODUCT
-
-    ){
-
-        nodes{
-
-            ... on Product{
-
-                id
-
-                title
-
-                handle
-
-                vendor
-
-                description
-
-                featuredImage{
-
-                    url
-
-                }
-
-                priceRange{
-
-                    minVariantPrice{
-
-                        amount
-
-                        currencyCode
-
-                    }
-
-                }
-
-            }
-
+        featuredImage {
+          url
         }
+
+      }
 
     }
 
-}
+  }
 
+}
 `;
 
 export default SEARCH_QUERY;

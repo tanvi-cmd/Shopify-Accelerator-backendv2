@@ -2,33 +2,33 @@ import ShopifyService from "../../services/shopify.service";
 
 import SEARCH_QUERY from "./graphql";
 
+import { RuntimeContext } from "../../shared/interfaces/runtime-context";
+
 class SearchService {
 
-    async search(config: any) {
+  async search(
+    context: RuntimeContext
+  ) {
 
-        return ShopifyService.execute({
+    return ShopifyService.execute({
 
-            api: "storefront",
+      api: "storefront",
 
-            config,
+      context,
 
-            query: SEARCH_QUERY,
+      query: SEARCH_QUERY,
 
-            variables: {
+      variables: {
 
-                query:
+        query: context.searchQuery,
 
-                    config.searchQuery || "",
+        first: context.pageSize
 
-                first:
+      }
 
-                    config.pageSize || 20
+    });
 
-            }
-
-        });
-
-    }
+  }
 
 }
 

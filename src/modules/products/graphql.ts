@@ -1,55 +1,26 @@
 const PRODUCTS_QUERY = `
+query Products($first: Int!) {
+  products(first: $first) {
+    nodes {
+      id
+      title
+      handle
+      vendor
+      productType
 
-query Products(
+      featuredImage {
+        url
+      }
 
-    $first: Int!
-
-){
-
-    products(
-
-        first: $first
-
-    ){
-
-        nodes{
-
-            id
-
-            title
-
-            handle
-
-            vendor
-
-            productType
-
-            description
-
-            featuredImage{
-
-                url
-
-            }
-
-            priceRange{
-
-                minVariantPrice{
-
-                    amount
-
-                    currencyCode
-
-                }
-
-            }
-
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
         }
-
+      }
     }
-
+  }
 }
-
 `;
 
 export default PRODUCTS_QUERY;

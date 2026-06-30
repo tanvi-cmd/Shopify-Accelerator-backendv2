@@ -1,27 +1,15 @@
 import ShopifyService from "../../services/shopify.service";
-
-import STORE_QUERY from "./graphql";
-
 import { RuntimeContext } from "../../shared/interfaces/runtime-context";
+import CREATE_CART from "./graphql";
 
-class StoreService {
-
-  async getStore(
-    context: RuntimeContext
-  ) {
-
+class CartService {
+  async createCart(context: RuntimeContext) {
     return ShopifyService.execute({
-
       api: "storefront",
-
       context,
-
-      query: STORE_QUERY
-
+      query: CREATE_CART
     });
-
   }
-
 }
 
-export default new StoreService();
+export default new CartService();
