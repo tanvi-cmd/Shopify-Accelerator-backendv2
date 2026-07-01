@@ -11,6 +11,10 @@ import MetaobjectsModule from "../modules/metaobjects";
 import OrdersModule from "../modules/orders";
 import MetafieldsModule from "../modules/metafields";
 import WishlistModule from "../modules/wishlist";
+import ConfiguratorModule from "../modules/configurator";
+import WebhooksModule from "../modules/webhooks";
+import ReviewsModule from "../modules/reviews";
+import CouponsModule from "../modules/coupons";
 
 
 export const ModuleRegistry = {
@@ -27,6 +31,9 @@ export const ModuleRegistry = {
   Orders: OrdersModule,
   Metafields: MetafieldsModule,
   Wishlist: WishlistModule,
-  Customer: CustomerModule
-  
+  Customer: CustomerModule,
+  Configurator: ConfiguratorModule,
+  Webhooks: WebhooksModule,
+  Reviews: ReviewsModule,
+  Coupons: CouponsModule
 };

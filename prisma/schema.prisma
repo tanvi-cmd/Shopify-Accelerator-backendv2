@@ -15,3 +15,22 @@ model Wishlist {
 
   @@unique([customerId, productId])
 }
+
+model Review {
+  id            String   @id @default(uuid())
+  productId     String
+  customerId    String?
+  customerEmail String?
+  customerName  String?
+  rating        Int
+  title         String?
+  body          String?
+  status        String   @default("approved")
+  source        String   @default("accelerator")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([productId])
+  @@index([customerId])
+  @@index([status])
+}

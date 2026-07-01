@@ -17,7 +17,10 @@ import wishlistRoutes from "./modules/wishlist/routes";
 import customerRoutes from "./modules/customer/routes";
 import cartRoutes from "./modules/cart/routes";
 import authRoutes from "./modules/auth/routes";
-
+import configuratorRoutes from "./modules/configurator/routes";
+import webhookRoutes from "./modules/webhooks/routes";
+import reviewRoutes from "./modules/reviews/routes";
+import couponRoutes from "./modules/coupons/routes";
 
 const app = express();
 
@@ -62,5 +65,22 @@ app.use("/customer", validationMiddleware,  customerRoutes);
 app.use("/cart", validationMiddleware,  cartRoutes);
 
 app.use("/auth", validationMiddleware,  authRoutes);
+
+app.use("/configurator", validationMiddleware,  configuratorRoutes);
+
+app.use("/webhooks", webhookRoutes); //Do not add validationMiddleware to webhook routes.
+
+app.use(
+  "/reviews",
+  validationMiddleware,
+  reviewRoutes
+);
+
+
+app.use(
+  "/coupons",
+  validationMiddleware,
+  couponRoutes
+);
 
 export default app;

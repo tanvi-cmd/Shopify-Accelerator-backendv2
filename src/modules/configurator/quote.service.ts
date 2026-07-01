@@ -1,8 +1,27 @@
+import {
+  ConfiguratorConfig,
+  ConfiguratorPriceResult,
+  ConfiguratorSkuResult
+} from "./types";
 
 export class QuoteService {
-  generate(){
+  generate(
+    config: ConfiguratorConfig,
+    price: ConfiguratorPriceResult,
+    sku: ConfiguratorSkuResult
+  ) {
+    const quoteNumber =
+      `HX-Q-${Date.now()}`;
+
     return {
-      quoteNumber: 'Q-1001'
+      quoteNumber,
+      createdAt: new Date().toISOString(),
+      customerId: config.customerId || null,
+      productId: config.productId || null,
+      variantId: config.variantId || null,
+      configuration: config,
+      sku,
+      price
     };
   }
 }
