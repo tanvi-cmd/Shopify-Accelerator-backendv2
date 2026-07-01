@@ -9,4 +9,29 @@ router.post(
   CustomerController.getProfile
 );
 
+router.post(
+  "/orders",
+  CustomerController.getOrders
+);
+
+router.post(
+  "/addresses",
+  CustomerController.getAddresses
+);
+
+router.post(
+  "/address",
+  CustomerController.createAddress
+);
+
+router.put(
+  "/address",
+  CustomerController.updateAddress
+);
+
+router.delete(
+  "/address/:id",
+  CustomerController.deleteAddress
+);
+
 export default router;

@@ -14,6 +14,8 @@ import metaobjectRoutes from "./modules/metaobjects/routes";
 import orderRoutes from "./modules/orders/routes";
 import metafieldRoutes from "./modules/metafields/routes";
 import wishlistRoutes from "./modules/wishlist/routes";
+import customerRoutes from "./modules/customer/routes";
+
 
 const app = express();
 
@@ -52,5 +54,7 @@ app.use("/orders", validationMiddleware, orderRoutes);
 app.use("/metafields",validationMiddleware, metafieldRoutes);
 
 app.use("/wishlist", validationMiddleware, wishlistRoutes);
+
+app.use("/customer", validationMiddleware,  customerRoutes);
 
 export default app;

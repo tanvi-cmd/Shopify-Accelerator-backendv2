@@ -12,6 +12,7 @@ import OrdersModule from "../modules/orders";
 import MetafieldsModule from "../modules/metafields";
 import WishlistModule from "../modules/wishlist";
 
+
 export const ModuleRegistry = {
   Store: StoreModule,
   Products: ProductModule,
@@ -25,6 +26,7 @@ export const ModuleRegistry = {
   Metaobjects: MetaobjectsModule,
   Orders: OrdersModule,
   Metafields: MetafieldsModule,
-  Wishlist: WishlistModule
+  Wishlist: WishlistModule,
+  Customer: CustomerModule
   
 };
