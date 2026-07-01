@@ -1,98 +1,127 @@
 import { Request, Response } from "express";
 
-import AuthService from "./service";
+import CartService from "./service";
+
 import { createRuntimeContext } from "../../lib/runtime-context";
 
-class AuthController {
-  async login(
+class CartController {
+
+  async createCart(
     req: Request,
     res: Response
   ) {
+
     const context =
       createRuntimeContext(req);
 
     const result =
-      await AuthService.login(context);
+      await CartService.createCart(
+        context
+      );
 
     return res
       .status(result.status || 200)
       .json(result);
+
   }
 
-  async sendOtp(
+  async getCart(
     req: Request,
     res: Response
   ) {
+
     const context =
       createRuntimeContext(req);
 
+    context.cartId =
+      req.body.cartId;
+
     const result =
-      await AuthService.sendOtp(context);
+      await CartService.getCart(
+        context
+      );
 
     return res
       .status(result.status || 200)
       .json(result);
+
   }
 
-  async verifyOtp(
+  async addLines(
     req: Request,
     res: Response
   ) {
+
     const context =
       createRuntimeContext(req);
 
+    context.cartId =
+      req.body.cartId;
+
+    context.lines =
+      req.body.lines;
+
     const result =
-      await AuthService.verifyOtp(context);
+      await CartService.addLines(
+        context
+      );
 
     return res
       .status(result.status || 200)
       .json(result);
+
   }
 
-  async google(
+  async updateLines(
     req: Request,
     res: Response
   ) {
+
     const context =
       createRuntimeContext(req);
 
+    context.cartId =
+      req.body.cartId;
+
+    context.lines =
+      req.body.lines;
+
     const result =
-      await AuthService.loginWithGoogle(context);
+      await CartService.updateLines(
+        context
+      );
 
     return res
       .status(result.status || 200)
       .json(result);
+
   }
 
-  async logout(
+  async removeLines(
     req: Request,
     res: Response
   ) {
+
     const context =
       createRuntimeContext(req);
 
+    context.cartId =
+      req.body.cartId;
+
+    context.lineIds =
+      req.body.lineIds;
+
     const result =
-      await AuthService.logout(context);
+      await CartService.removeLines(
+        context
+      );
 
     return res
       .status(result.status || 200)
       .json(result);
+
   }
 
-  async me(
-    req: Request,
-    res: Response
-  ) {
-    const context =
-      createRuntimeContext(req);
-
-    const result =
-      await AuthService.me(context);
-
-    return res
-      .status(result.status || 200)
-      .json(result);
-  }
 }
 
-export default new AuthController();
+export default new CartController();

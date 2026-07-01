@@ -1,41 +1,24 @@
+export type LoginType =
+  | "password"
+  | "otp"
+  | "google";
+
 export interface LoginRequest {
-
   store: string;
-
   storefrontToken: string;
-
   adminToken: string;
-
   apiVersion: string;
 
-  email: string;
+  loginType: LoginType;
 
-  password: string;
+  email?: string;
+  customerEmail?: string;
 
-}
+  password?: string;
+  otp?: string;
 
-export interface LoginResponse {
+  googleIdToken?: string;
+  googleClientId?: string;
 
-  customerAccessTokenCreate: {
-
-    customerAccessToken: {
-
-      accessToken: string;
-
-      expiresAt: string;
-
-    };
-
-    customerUserErrors: {
-
-      code: string;
-
-      field: string[];
-
-      message: string;
-
-    }[];
-
-  };
-
+  customerAccessToken?: string;
 }
