@@ -1,9 +1,13 @@
-import MetaobjectService from "./service";
+import MetafieldsService from "./service";
 
 export default {
-  name: "Metaobjects",
+  name: "Metafields",
 
   async execute(context: any) {
-    return MetaobjectService.getMetaobjects(context);
+
+    // Explorer always scans everything
+    context.ownerType = "all";
+
+    return MetafieldsService.getMetafields(context);
   }
 };

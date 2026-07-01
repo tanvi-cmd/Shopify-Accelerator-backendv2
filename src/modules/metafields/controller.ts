@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
-import MetaobjectService from "./service";
+import MetafieldsService from "./service";
 import { createRuntimeContext } from "../../lib/runtime-context";
 
-class MetaobjectController {
-  async getMetaobjects(req: Request, res: Response) {
+class MetafieldsController {
+  async getMetafields(req: Request, res: Response) {
     try {
       const context = createRuntimeContext(req);
 
-      const result = await MetaobjectService.getMetaobjects(context);
+      const result =
+        await MetafieldsService.getMetafields(context);
 
       return res.status(result.status || 200).json(result);
     } catch (error: any) {
@@ -19,4 +20,4 @@ class MetaobjectController {
   }
 }
 
-export default new MetaobjectController();
+export default new MetafieldsController();

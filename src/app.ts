@@ -12,6 +12,7 @@ import menuRoutes from "./modules/menus/routes";
 import cmsRoutes from "./modules/cms/routes";
 import metaobjectRoutes from "./modules/metaobjects/routes";
 import orderRoutes from "./modules/orders/routes";
+import metafieldRoutes from "./modules/metafields/routes";
 
 const app = express();
 
@@ -46,5 +47,7 @@ app.use("/cms", validationMiddleware, cmsRoutes);
 app.use("/metaobjects",  validationMiddleware,  metaobjectRoutes);
 
 app.use("/orders", validationMiddleware, orderRoutes);
+
+app.use("/metafields",validationMiddleware, metafieldRoutes);
 
 export default app;
