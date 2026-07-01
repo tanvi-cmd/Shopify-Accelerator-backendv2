@@ -25,11 +25,9 @@ class CouponsService {
   }
 
   private normalizeDiscountId(id: string) {
-    if (
-      id.startsWith(
-        "gid://shopify/DiscountCodeNode/"
-      )
-    ) {
+    if (!id) return "";
+
+    if (id.startsWith("gid://shopify/DiscountCodeNode/")) {
       return id;
     }
 
@@ -37,10 +35,7 @@ class CouponsService {
   }
 
   private getUserErrors(result: any, key: string) {
-    return (
-      result?.data?.[key]?.userErrors ||
-      []
-    );
+    return result?.data?.[key]?.userErrors || [];
   }
 
   private validateInput(input: any) {
@@ -57,8 +52,7 @@ class CouponsService {
       errors.push("type must be percentage or fixed.");
     }
 
-    const value =
-      Number(input.value);
+    const value = Number(input.value);
 
     if (!value || value <= 0) {
       errors.push("value must be greater than 0.");
@@ -75,19 +69,12 @@ class CouponsService {
   }
 
   private buildBasicCodeDiscount(input: any) {
-    const code =
-      this.normalizeCode(input.code);
+    const code = this.normalizeCode(input.code);
+    const value = Number(input.value);
 
-    const value =
-      Number(input.value);
-
-    const discount: any = {
-      title:
-        input.title ||
-        code,
-
+    const basicCodeDiscount: any = {
+      title: input.title || code,
       code,
-
       startsAt:
         input.startsAt ||
         new Date().toISOString(),
@@ -100,8 +87,9 @@ class CouponsService {
         value:
           input.type === "percentage"
             ? {
-                percentage:
-                  Number((value / 100).toFixed(4))
+                percentage: Number(
+                  (value / 100).toFixed(4)
+                )
               }
             : {
                 discountAmount: {
@@ -116,21 +104,30 @@ class CouponsService {
       },
 
       appliesOncePerCustomer:
-        input.appliesOncePerCustomer ?? false
+        input.appliesOncePerCustomer ?? false,
+
+      combinesWith: {
+        orderDiscounts:
+          input.combinesWith?.orderDiscounts ?? false,
+        productDiscounts:
+          input.combinesWith?.productDiscounts ?? false,
+        shippingDiscounts:
+          input.combinesWith?.shippingDiscounts ?? false
+      }
     };
 
     if (input.endsAt !== undefined) {
-      discount.endsAt =
+      basicCodeDiscount.endsAt =
         input.endsAt || null;
     }
 
     if (input.usageLimit) {
-      discount.usageLimit =
+      basicCodeDiscount.usageLimit =
         Number(input.usageLimit);
     }
 
     if (input.minimumSubtotal) {
-      discount.minimumRequirement = {
+      basicCodeDiscount.minimumRequirement = {
         subtotal: {
           greaterThanOrEqualToSubtotal:
             String(input.minimumSubtotal)
@@ -138,44 +135,28 @@ class CouponsService {
       };
     }
 
-    if (input.combinesWith) {
-      discount.combinesWith = {
-        orderDiscounts:
-          input.combinesWith.orderDiscounts ?? false,
-        productDiscounts:
-          input.combinesWith.productDiscounts ?? false,
-        shippingDiscounts:
-          input.combinesWith.shippingDiscounts ?? false
-      };
-    }
-
-    return discount;
+    return basicCodeDiscount;
   }
 
   async listCoupons(context: RuntimeContext) {
-    const input =
-      this.getInput(context);
-
-    const query =
-      input.query ||
-      input.search ||
-      undefined;
+    const input = this.getInput(context);
 
     return ShopifyService.execute({
       api: "admin",
       context,
       query: LIST_DISCOUNTS_QUERY,
       variables: {
-        first:
-          context.pageSize || 20,
-        query
+        first: context.pageSize || 20,
+        query:
+          input.query ||
+          input.search ||
+          "method:code"
       }
     });
   }
 
   async getCoupon(context: RuntimeContext) {
-    const input =
-      this.getInput(context);
+    const input = this.getInput(context);
 
     const id =
       input.discountId ||
@@ -196,28 +177,22 @@ class CouponsService {
       context,
       query: DISCOUNT_BY_ID_QUERY,
       variables: {
-        id:
-          this.normalizeDiscountId(id)
+        id: this.normalizeDiscountId(id)
       }
     });
   }
 
   async createCoupon(context: RuntimeContext) {
-    const started =
-      Date.now();
+    const started = Date.now();
+    const input = this.getInput(context);
 
-    const input =
-      this.getInput(context);
-
-    const errors =
-      this.validateInput(input);
+    const errors = this.validateInput(input);
 
     if (errors.length > 0) {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         errors
       };
     }
@@ -243,8 +218,7 @@ class CouponsService {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         errors: userErrors,
         raw: result
       };
@@ -254,17 +228,13 @@ class CouponsService {
       ...result,
       success: true,
       status: 200,
-      duration:
-        Date.now() - started
+      duration: Date.now() - started
     };
   }
 
   async updateCoupon(context: RuntimeContext) {
-    const started =
-      Date.now();
-
-    const input =
-      this.getInput(context);
+    const started = Date.now();
+    const input = this.getInput(context);
 
     const id =
       input.discountId ||
@@ -275,21 +245,18 @@ class CouponsService {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         error: "discountId is required."
       };
     }
 
-    const errors =
-      this.validateInput(input);
+    const errors = this.validateInput(input);
 
     if (errors.length > 0) {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         errors
       };
     }
@@ -300,8 +267,7 @@ class CouponsService {
         context,
         query: UPDATE_BASIC_DISCOUNT_MUTATION,
         variables: {
-          id:
-            this.normalizeDiscountId(id),
+          id: this.normalizeDiscountId(id),
           basicCodeDiscount:
             this.buildBasicCodeDiscount(input)
         }
@@ -317,8 +283,7 @@ class CouponsService {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         errors: userErrors,
         raw: result
       };
@@ -328,17 +293,13 @@ class CouponsService {
       ...result,
       success: true,
       status: 200,
-      duration:
-        Date.now() - started
+      duration: Date.now() - started
     };
   }
 
   async deleteCoupon(context: RuntimeContext) {
-    const started =
-      Date.now();
-
-    const input =
-      this.getInput(context);
+    const started = Date.now();
+    const input = this.getInput(context);
 
     const id =
       input.discountId ||
@@ -349,8 +310,7 @@ class CouponsService {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         error: "discountId is required."
       };
     }
@@ -361,8 +321,7 @@ class CouponsService {
         context,
         query: DELETE_DISCOUNT_MUTATION,
         variables: {
-          id:
-            this.normalizeDiscountId(id)
+          id: this.normalizeDiscountId(id)
         }
       });
 
@@ -376,8 +335,7 @@ class CouponsService {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         errors: userErrors,
         raw: result
       };
@@ -387,17 +345,13 @@ class CouponsService {
       ...result,
       success: true,
       status: 200,
-      duration:
-        Date.now() - started
+      duration: Date.now() - started
     };
   }
 
   async validateCoupon(context: RuntimeContext) {
-    const started =
-      Date.now();
-
-    const input =
-      this.getInput(context);
+    const started = Date.now();
+    const input = this.getInput(context);
 
     const code =
       this.normalizeCode(input.code);
@@ -406,8 +360,7 @@ class CouponsService {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         error: "code is required."
       };
     }
@@ -419,8 +372,7 @@ class CouponsService {
         query: LIST_DISCOUNTS_QUERY,
         variables: {
           first: 1,
-          query:
-            `code:${code}`
+          query: `code:${code}`
         }
       });
 
@@ -429,39 +381,28 @@ class CouponsService {
 
     return {
       success: !!node,
-      status:
-        node ? 200 : 404,
-      duration:
-        Date.now() - started,
+      status: node ? 200 : 404,
+      duration: Date.now() - started,
       data: {
-        valid:
-          !!node,
+        valid: !!node,
         code,
-        discount:
-          node || null
+        discount: node || null
       }
     };
   }
 
   async applyToCart(context: RuntimeContext) {
-    const started =
-      Date.now();
+    const started = Date.now();
+    const input = this.getInput(context);
 
-    const input =
-      this.getInput(context);
-
-    const cartId =
-      input.cartId;
-
-    const code =
-      this.normalizeCode(input.code);
+    const cartId = input.cartId;
+    const code = this.normalizeCode(input.code);
 
     if (!cartId) {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         error: "cartId is required."
       };
     }
@@ -470,8 +411,7 @@ class CouponsService {
       return {
         success: false,
         status: 400,
-        duration:
-          Date.now() - started,
+        duration: Date.now() - started,
         error: "code is required."
       };
     }
@@ -488,8 +428,7 @@ class CouponsService {
   }
 
   async explore(context: RuntimeContext) {
-    const started =
-      Date.now();
+    const started = Date.now();
 
     const discounts =
       await ShopifyService.execute({
@@ -497,10 +436,8 @@ class CouponsService {
         context,
         query: LIST_DISCOUNTS_QUERY,
         variables: {
-          first:
-            context.pageSize || 10,
-          query:
-            "method:code"
+          first: context.pageSize || 10,
+          query: "method:code"
         }
       });
 
@@ -508,8 +445,7 @@ class CouponsService {
       success: true,
       status: 200,
       module: "Coupons",
-      duration:
-        Date.now() - started,
+      duration: Date.now() - started,
       data: {
         provider: "Shopify Discounts",
         discounts

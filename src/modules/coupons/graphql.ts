@@ -1,7 +1,7 @@
-export const DISCOUNT_FIELDS = `
+export const DISCOUNT_NODE_FIELDS = `
 id
 
-discount {
+codeDiscount {
   __typename
 
   ... on DiscountCodeBasic {
@@ -36,14 +36,16 @@ discount {
           appliesOnEachItem
         }
       }
-
-      items {
-        __typename
-      }
     }
 
-    customerSelection {
+    minimumRequirement {
       __typename
+    }
+
+    combinesWith {
+      orderDiscounts
+      productDiscounts
+      shippingDiscounts
     }
   }
 }
@@ -60,7 +62,7 @@ query ListDiscounts(
     reverse: true
   ) {
     nodes {
-      ${DISCOUNT_FIELDS}
+      ${DISCOUNT_NODE_FIELDS}
     }
 
     pageInfo {
@@ -74,7 +76,7 @@ query ListDiscounts(
 export const DISCOUNT_BY_ID_QUERY = `
 query DiscountById($id: ID!) {
   discountNode(id: $id) {
-    ${DISCOUNT_FIELDS}
+    ${DISCOUNT_NODE_FIELDS}
   }
 }
 `;
@@ -87,7 +89,7 @@ mutation CreateBasicDiscount(
     basicCodeDiscount: $basicCodeDiscount
   ) {
     codeDiscountNode {
-      ${DISCOUNT_FIELDS}
+      ${DISCOUNT_NODE_FIELDS}
     }
 
     userErrors {
@@ -109,7 +111,7 @@ mutation UpdateBasicDiscount(
     basicCodeDiscount: $basicCodeDiscount
   ) {
     codeDiscountNode {
-      ${DISCOUNT_FIELDS}
+      ${DISCOUNT_NODE_FIELDS}
     }
 
     userErrors {
