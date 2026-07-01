@@ -16,6 +16,13 @@ export function createRuntimeContext(
     enableConfigurator: req.body.enableConfigurator ?? false,
     //metaobjectType: req.body.metaobjectType ?? "faq",
     metaobjectType: req.body.metaobjectType ?? req.params?.type ?? "",
-    metaobjectHandle: req.body.metaobjectHandle ?? req.params?.handle ?? ""
+    metaobjectHandle: req.body.metaobjectHandle ?? req.params?.handle ?? "",
+    databaseUrl: req.body.databaseUrl,
+    jwtSecret: req.body.jwtSecret,
+    customerId: req.body.customerId,
+    productId: req.body.productId,
+    customerAccessToken: req.body.customerAccessToken,
+    email: req.body.email,
+    password: req.body.password
   };
 }

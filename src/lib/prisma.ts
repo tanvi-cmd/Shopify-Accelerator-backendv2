@@ -1,21 +1,42 @@
 import { PrismaClient } from "@prisma/client";
 
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
+const clients = new Map<string, PrismaClient>();
 
-const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "info", "warn", "error"]
-        : ["error"]
+export function getPrismaClient(
+  databaseUrl?: string
+): PrismaClient {
+  const url =
+    databaseUrl ||
+    process.env.DATABASE_URL;
+
+  if (!url) {
+    throw new Error(
+      "DATABASE_URL is required. Pass databaseUrl from frontend or set DATABASE_URL in .env."
+    );
+  }
+
+  if (
+    !url.startsWith("postgresql://") &&
+    !url.startsWith("postgres://")
+  ) {
+    throw new Error(
+      "Invalid DATABASE_URL. It must start with postgresql:// or postgres://"
+    );
+  }
+
+  if (clients.has(url)) {
+    return clients.get(url)!;
+  }
+
+  const prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url
+      }
+    }
   });
 
-if (process.env.NODE_ENV !== "production") {
-  global.prisma = prisma;
-}
+  clients.set(url, prisma);
 
-export default prisma;
+  return prisma;
+}
